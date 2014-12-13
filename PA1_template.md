@@ -1,19 +1,16 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 David Chong
 
 ## Loading and preprocessing the data
-```{r}
+
+```r
 data <- read.csv("activity.csv", as.is=TRUE)
 ```
   
 
 ## What is mean total number of steps taken per day?
-```{r}
+
+```r
 Steps <- numeric()
 CurDay <- ""
 CurSteps <- 0
@@ -38,12 +35,15 @@ MedianSteps <- median(Steps)
 hist(Steps, xlab="Number of Steps per day", main="Histogram of total steps taken per day")
 box()
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png) 
   
-The mean number of steps taken each day was `r round(MeanSteps, digits=2)`.  
-The median number of steps taken each day was `r round(MedianSteps, digits=2)`
+The mean number of steps taken each day was 9354.23.  
+The median number of steps taken each day was 1.0395\times 10^{4}
 
 ## What is the average daily activity pattern?
-```{r}
+
+```r
 Interval <- numeric()
 IntervalSteps <- numeric()
 IntervalCount <- numeric()
@@ -73,25 +73,34 @@ Interval <- Interval[order(Interval)]
 for(i in 1:length(Interval)) Interval[i] <- i
 
 plot(Interval, IntervalSteps, type="l", main="Graph of average steps taken at each 5 minute interval over 2 months", ylab="Number of Steps")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
 
+```r
 IntervalOrder <- order(IntervalSteps, decreasing = TRUE)
 
 head(TimeLabels[IntervalOrder])
-```  
-The interval on average with the largest number of steps is `r TimeLabels[IntervalOrder[1]]`.
+```
+
+```
+## [1] 835 840 850 845 830 820
+```
+The interval on average with the largest number of steps is 835.
 
 
 ## Imputing missing values
-```{r}
+
+```r
 MissingValues <- 0
 for(i in 1:nrow(data)) {
   if(is.na(data$steps[i])) MissingValues <- MissingValues + 1
 }
-```  
-The number of rows with missing values is `r MissingValues`.  
+```
+The number of rows with missing values is 2304.  
 Replace missing values accordingly with average of each Interval.  
-```{r}
+
+```r
 AdjustedData <- data
 for(i in 1:nrow(AdjustedData)) {
   if(is.na(AdjustedData$steps[i])) {
@@ -130,14 +139,17 @@ box()
 hist(aSteps, xlab="Number of Steps per day", main="Histogram of total steps taken per day (Adjusted Data)")
 box()
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
   
-The mean number of steps taken each day changed from `r round(MeanSteps, digits=2)` (Unadjusted) to `r round(aMeanSteps, digits=2)` (Adjusted).  
-The median number of steps taken each day changed from `r round(MedianSteps, digits=2)` (Unadjusted) to `r round(aMedianSteps, digits=2)` (Adjusted).  
+The mean number of steps taken each day changed from 9354.23 (Unadjusted) to 1.076619\times 10^{4} (Adjusted).  
+The median number of steps taken each day changed from 1.0395\times 10^{4} (Unadjusted) to 1.076619\times 10^{4} (Adjusted).  
 
 Overall there is a change in the mean and median after imputing missing values.  There is a rightward shift of values, resulting in an increase in both mean and median values.
 
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r, warning=FALSE, message=FALSE}
+
+```r
 data$date <- as.Date(data$date)
 IsWeekend <- logical()
 for(i in 1:nrow(data)) {
@@ -217,3 +229,5 @@ TotalDataFrame <- rbind(WeekdayDataFrame, WeekendDataFrame)
 
 ggplot(TotalDataFrame, aes(Interval,AvgSteps))+geom_line()+facet_wrap(~IsWeekend)
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
